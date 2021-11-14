@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+package layout.v4;
+
+import "google/api/annotations.proto";
+
+option go_package = "spaco-1103/api/layout/v4;v4";
+option java_multiple_files = true;
+option java_package = "dev.kratos.api.layout.v4";
+option java_outer_classname = "layoutV4";
+
+// The greeting service definition.
+service Layout {
+  // 获取获取播放资源列表
+  rpc getDeviceResourceList (LayoutResourceRequest) returns (LayoutResourceReply) {
+      option (google.api.http) = {
+          get: "/getDeviceResourceList"
+      };
+  }
+}
+
+// The request message containing the user's name.
+message LayoutResourceRequest {
+  string hardwareKey = 1;
+}
+
+// The response message containing the greetings
+message LayoutResourceReply {
+  message ResourceLayout {
+    string id = 1;
+    string name = 2;
+    string md5 = 3;
+    string path = 4;
+  }
+  repeated ResourceLayout layouts = 1;
+  message ResourceSchedule {
+    string id = 1;
+    string name = 2;
+    string detail = 3;    
+  }
+  repeated ResourceSchedule schedules = 2;
+  message Resource {
+    string id = 1;
+    string name = 2;
+    string md5 = 3;
+    string path = 4;    
+  }
+  repeated Resource resources = 3;
+}

@@ -5,11 +5,11 @@
 package main
 
 import (
-	"spaco_bff-1112/internal/biz"
-	"spaco_bff-1112/internal/conf"
-	"spaco_bff-1112/internal/data"
-	"spaco_bff-1112/internal/server"
-	"spaco_bff-1112/internal/service"
+	"bff/internal/biz"
+	"bff/internal/conf"
+	"bff/internal/data"
+	"bff/internal/server"
+	"bff/internal/service"
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"

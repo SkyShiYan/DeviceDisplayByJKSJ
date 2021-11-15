@@ -1,0 +1,70 @@
+syntax = "proto3";
+
+package device.v4;
+
+import "google/api/annotations.proto";
+
+option go_package = "spaco-1103/api/device/v4;v4";
+option java_multiple_files = true;
+option java_package = "dev.kratos.api.device.v4";
+option java_outer_classname = "deviceV4";
+
+// The greeting service definition.
+service ClientDevice {
+  // 获取设备
+  rpc getDeviceByKey (GetDeviceByKeyRequest) returns (GetDeviceByKeyReply) {
+    option (google.api.http) = {
+        post: "/getDeviceByKey"
+        body: "*"
+    };
+  }
+
+  // 新增设备信息
+  rpc addDeviceByKey (AddDeviceByKeyRequest) returns (AddDeviceByKeyReply) {
+    option (google.api.http) = {
+        post: "/addDeviceByKey"
+        body: "*"
+    };
+  }
+
+  // 更新设备信息
+  rpc updateDeviceByKey (UpdateDeviceByKeyRequest) returns (UpdateDeviceByKeyReply) {
+    option (google.api.http) = {
+        post: "/updateDeviceByKey"
+        body: "*"
+    };
+  }
+}
+
+message GetDeviceByKeyRequest {
+  string hardwareKey = 1;
+}
+
+message GetDeviceByKeyReply {
+  int32 id = 1;
+  string name = 2;
+  string hardwareKey = 3;
+  int32 defaultlayoutid = 4;
+  string status = 5;
+  string storenumber = 6;
+}
+
+message AddDeviceByKeyRequest {
+  string name = 1;
+  string hardwareKey = 2;
+  int32 defaultlayoutid = 3;
+  string status = 4;
+  string storenumber = 5;
+}
+
+message AddDeviceByKeyReply {
+  string message = 1;
+}
+
+message UpdateDeviceByKeyRequest {
+  string hardwareKey = 1;
+}
+
+message UpdateDeviceByKeyReply {
+  string message = 1;
+}

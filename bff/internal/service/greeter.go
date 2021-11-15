@@ -3,8 +3,9 @@ package service
 import (
 	"context"
 
-	v1 "spaco_bff-1112/api/helloworld/v1"
-	"spaco_bff-1112/internal/biz"
+	v1 "bff/api/helloworld/v1"
+	"bff/internal/biz"
+
 	"github.com/go-kratos/kratos/v2/log"
 )
 

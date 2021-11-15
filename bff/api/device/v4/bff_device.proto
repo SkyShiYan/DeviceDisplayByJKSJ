@@ -4,13 +4,13 @@ package device.v4;
 
 import "google/api/annotations.proto";
 
-option go_package = "spaco-1103/api/device/v4;v4";
+option go_package = "bff/api/device/v4;v4";
 option java_multiple_files = true;
 option java_package = "dev.kratos.api.device.v4";
-option java_outer_classname = "deviceV4";
+option java_outer_classname = "bffV4";
 
 // The greeting service definition.
-service Device {
+service BffDevice {
   // 注册或更新设备
   rpc register (RegisterRequest) returns (RegisterReply) {
     option (google.api.http) = {
@@ -27,11 +27,7 @@ service Device {
       };
   }
 
-  rpc update(UpdeteRequest) returns(UpdateReply){
-
-  }
-
-  // 部署
+  // 预部署
   rpc deploy (DeployRequest) returns (DeployReply) {
       option (google.api.http) = {
           post: "/preDeploy"

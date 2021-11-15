@@ -6,13 +6,13 @@
 package main
 
 import (
+	"bff/internal/biz"
+	"bff/internal/conf"
+	"bff/internal/data"
+	"bff/internal/server"
+	"bff/internal/service"
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"
-	"spaco-1103/app/layout/service/internal/biz"
-	"spaco-1103/app/layout/service/internal/conf"
-	"spaco-1103/app/layout/service/internal/data"
-	"spaco-1103/app/layout/service/internal/server"
-	"spaco-1103/app/layout/service/internal/service"
 )
 
 // Injectors from wire.go:
@@ -23,11 +23,11 @@ func initApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*
 	if err != nil {
 		return nil, nil, err
 	}
-	greeterRepo := data.NewGreeterRepo(dataData, logger)
-	greeterUsecase := biz.NewGreeterUsecase(greeterRepo, logger)
-	greeterService := service.NewGreeterService(greeterUsecase, logger)
-	httpServer := server.NewHTTPServer(confServer, greeterService, logger)
-	grpcServer := server.NewGRPCServer(confServer, greeterService, logger)
+	deviceRepo := data.NewBffRepo(dataData, logger)
+	bffUsecase := biz.NewBffUsecase(deviceRepo, logger)
+	bffService := service.NewBffService(bffUsecase, logger)
+	httpServer := server.NewHTTPServer(confServer, bffService, logger)
+	grpcServer := server.NewGRPCServer(confServer, bffService, logger)
 	app := newApp(logger, httpServer, grpcServer)
 	return app, func() {
 		cleanup()

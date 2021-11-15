@@ -1,16 +1,17 @@
 syntax = "proto3";
 
-package helloworld.v1;
+package device.v4;
 import "errors/errors.proto";
 
-option go_package = "spaco_bff-1112/api/helloworld/v1;v1";
+option go_package = "bff/api/device/v4;v4";
 option java_multiple_files = true;
-option java_package = "helloworld.v1.errors";
-option objc_class_prefix = "APIHelloworldErrors";
+option java_package = "device.v4.errors";
+option objc_class_prefix = "APIDeviceErrors";
 
 enum ErrorReason {
   option (errors.default_code) = 500;
 
   USER_NOT_FOUND = 0 [(errors.code) = 404];
   CONTENT_MISSING = 1 [(errors.code) = 400];
+  ADD_ERR = 2 [(errors.code) = 501];
 }

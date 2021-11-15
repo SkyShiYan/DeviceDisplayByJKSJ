@@ -4,7 +4,8 @@ import (
 	"flag"
 	"os"
 
-	"spaco_bff-1112/internal/conf"
+	"bff/internal/conf"
+
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/config"
 	"github.com/go-kratos/kratos/v2/config/file"
@@ -17,9 +18,9 @@ import (
 // go build -ldflags "-X main.Version=x.y.z"
 var (
 	// Name is the name of the compiled software.
-	Name string
+	Name = "bff"
 	// Version is the version of the compiled software.
-	Version string
+	Version = "v4"
 	// flagconf is the config flag.
 	flagconf string
 

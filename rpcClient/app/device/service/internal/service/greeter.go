@@ -24,11 +24,11 @@ func NewGreeterService(uc *biz.GreeterUsecase, logger log.Logger) *GreeterServic
 }
 
 // SayHello implements helloworld.GreeterServer
-func (s *GreeterService) SayHello(ctx context.Context, in *v4.RegisterRequest) (*v1.HelloReply, error) {
-	s.log.WithContext(ctx).Infof("SayHello Received: %v", in.GetHardwareKey())
+func (s *GreeterService) SayHello(ctx context.Context, in *v1.HelloRequest) (*v1.HelloReply, error) {
+	s.log.WithContext(ctx).Infof("SayHello Received: %v", in.GetName())
 
-	if in.GetHardwareKey() == "error" {
-		return nil, v1.ErrorUserNotFound("user not found: %s", in.GetHardwareKey())
+	if in.GetName() == "error" {
+		return nil, v1.ErrorUserNotFound("user not found: %s", in.GetName())
 	}
-	return &v1.HelloReply{Message: "Hello " + in.GetHardwareKey()}, nil
+	return &v1.HelloReply{Message: "Hello " + in.GetName()}, nil
 }

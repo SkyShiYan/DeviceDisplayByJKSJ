@@ -8,11 +8,11 @@ import (
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
-	"spaco-1103/app/device/service/internal/biz"
-	"spaco-1103/app/device/service/internal/conf"
-	"spaco-1103/app/device/service/internal/data"
-	"spaco-1103/app/device/service/internal/server"
-	"spaco-1103/app/device/service/internal/service"
+	"rpcClient/app/device/service/internal/biz"
+	"rpcClient/app/device/service/internal/conf"
+	"rpcClient/app/device/service/internal/data"
+	"rpcClient/app/device/service/internal/server"
+	"rpcClient/app/device/service/internal/service"
 )
 
 // initApp init kratos application.

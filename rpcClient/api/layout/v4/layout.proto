@@ -4,7 +4,7 @@ package layout.v4;
 
 import "google/api/annotations.proto";
 
-option go_package = "spaco-1103/api/layout/v4;v4";
+option go_package = "rpcClient/api/layout/v4;v4";
 option java_multiple_files = true;
 option java_package = "dev.kratos.api.layout.v4";
 option java_outer_classname = "layoutV4";

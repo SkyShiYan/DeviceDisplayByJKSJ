@@ -4,7 +4,7 @@ import (
 	"flag"
 	"os"
 
-	"spaco-1103/app/device/service/internal/conf"
+	"rpcClient/app/device/service/internal/conf"
 
 	consul "github.com/go-kratos/consul/registry"
 	"github.com/go-kratos/kratos/v2"

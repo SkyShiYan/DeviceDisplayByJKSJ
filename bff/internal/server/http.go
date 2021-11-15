@@ -27,6 +27,6 @@ func NewHTTPServer(c *conf.Server, bff *service.BffService, logger log.Logger) *
 		opts = append(opts, http.Timeout(c.Http.Timeout.AsDuration()))
 	}
 	srv := http.NewServer(opts...)
-	v4.RegisterDeviceHTTPServer(srv, bff)
+	v4.RegisterBffDeviceHTTPServer(srv, bff)
 	return srv
 }

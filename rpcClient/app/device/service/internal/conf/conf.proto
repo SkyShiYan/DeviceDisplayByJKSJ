@@ -1,7 +1,7 @@
 syntax = "proto3";
 package kratos.api;
 
-option go_package = "spaco-1103/internal/conf;conf";
+option go_package = "rpcClient/internal/conf;conf";
 
 import "google/protobuf/duration.proto";
 

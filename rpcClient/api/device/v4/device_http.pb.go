@@ -25,7 +25,7 @@ type DeviceHTTPServer interface {
 
 func RegisterDeviceHTTPServer(s *http.Server, srv DeviceHTTPServer) {
 	r := s.Route("/")
-	r.POST("/getDeviceByKey", _Device_GetDeviceByKey0_HTTP_Handler(srv))
+	r.GET("/getDeviceByKey/{hardwareKey}", _Device_GetDeviceByKey0_HTTP_Handler(srv))
 	r.POST("/addDeviceByKey", _Device_AddDeviceByKey0_HTTP_Handler(srv))
 	r.POST("/updateDeviceByKey", _Device_UpdateDeviceByKey0_HTTP_Handler(srv))
 }
@@ -33,7 +33,10 @@ func RegisterDeviceHTTPServer(s *http.Server, srv DeviceHTTPServer) {
 func _Device_GetDeviceByKey0_HTTP_Handler(srv DeviceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in GetDeviceByKeyRequest
-		if err := ctx.Bind(&in); err != nil {
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
 			return err
 		}
 		http.SetOperation(ctx, "/device.v4.Device/GetDeviceByKey")
@@ -116,11 +119,11 @@ func (c *DeviceHTTPClientImpl) AddDeviceByKey(ctx context.Context, in *AddDevice
 
 func (c *DeviceHTTPClientImpl) GetDeviceByKey(ctx context.Context, in *GetDeviceByKeyRequest, opts ...http.CallOption) (*GetDeviceByKeyReply, error) {
 	var out GetDeviceByKeyReply
-	pattern := "/getDeviceByKey"
-	path := binding.EncodeURL(pattern, in, false)
+	pattern := "/getDeviceByKey/{hardwareKey}"
+	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation("/device.v4.Device/GetDeviceByKey"))
 	opts = append(opts, http.PathTemplate(pattern))
-	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

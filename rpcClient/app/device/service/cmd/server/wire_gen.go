@@ -8,11 +8,11 @@ package main
 import (
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"
-	"spaco-1103/app/device/service/internal/biz"
-	"spaco-1103/app/device/service/internal/conf"
-	"spaco-1103/app/device/service/internal/data"
-	"spaco-1103/app/device/service/internal/server"
-	"spaco-1103/app/device/service/internal/service"
+	"rpcClient/app/device/service/internal/biz"
+	"rpcClient/app/device/service/internal/conf"
+	"rpcClient/app/device/service/internal/data"
+	"rpcClient/app/device/service/internal/server"
+	"rpcClient/app/device/service/internal/service"
 )
 
 // Injectors from wire.go:
@@ -23,11 +23,11 @@ func initApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*
 	if err != nil {
 		return nil, nil, err
 	}
-	greeterRepo := data.NewGreeterRepo(dataData, logger)
-	greeterUsecase := biz.NewGreeterUsecase(greeterRepo, logger)
-	greeterService := service.NewGreeterService(greeterUsecase, logger)
-	httpServer := server.NewHTTPServer(confServer, greeterService, logger)
-	grpcServer := server.NewGRPCServer(confServer, greeterService, logger)
+	deviceRepo := data.NewDeviceRepo(dataData, logger)
+	deviceUsecase := biz.NewDeviceUsecase(deviceRepo, logger)
+	deviceService := service.NewDeviceService(deviceUsecase, logger)
+	httpServer := server.NewHTTPServer(confServer, deviceService, logger)
+	grpcServer := server.NewGRPCServer(confServer, deviceService, logger)
 	app := newApp(logger, httpServer, grpcServer)
 	return app, func() {
 		cleanup()

@@ -3,7 +3,7 @@ syntax = "proto3";
 package device.v4;
 import "errors/errors.proto";
 
-option go_package = "spaco-1103/api/device/v4;v4";
+option go_package = "rpcClient/api/device/v4;v4";
 option java_multiple_files = true;
 option java_package = "device.v4.errors";
 option objc_class_prefix = "APIDeviceErrors";

@@ -11,7 +11,7 @@ import (
 
 // BffService is a greeter service.
 type BffService struct {
-	v4.UnimplementedDeviceServer
+	v4.UnimplementedBffDeviceServer
 	buc *biz.BffUsecase
 	log *log.Helper
 }

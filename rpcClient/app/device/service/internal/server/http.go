@@ -1,9 +1,9 @@
 package server
 
 import (
-	v4 "spaco-1103/api/device/v4"
-	"spaco-1103/app/device/service/internal/conf"
-	"spaco-1103/app/device/service/internal/service"
+	v4 "rpcClient/api/device/v4"
+	"rpcClient/app/device/service/internal/conf"
+	"rpcClient/app/device/service/internal/service"
 
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
@@ -11,7 +11,7 @@ import (
 )
 
 // NewHTTPServer new a HTTP server.
-func NewHTTPServer(c *conf.Server, greeter *service.GreeterService, logger log.Logger) *http.Server {
+func NewHTTPServer(c *conf.Server, device *service.DeviceService, logger log.Logger) *http.Server {
 	var opts = []http.ServerOption{
 		http.Middleware(
 			recovery.Recovery(),
@@ -27,6 +27,6 @@ func NewHTTPServer(c *conf.Server, greeter *service.GreeterService, logger log.L
 		opts = append(opts, http.Timeout(c.Http.Timeout.AsDuration()))
 	}
 	srv := http.NewServer(opts...)
-	v4.RegisterDeviceHTTPServer(srv, greeter)
+	v4.RegisterDeviceHTTPServer(srv, device)
 	return srv
 }

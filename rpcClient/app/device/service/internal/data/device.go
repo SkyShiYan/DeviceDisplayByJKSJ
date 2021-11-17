@@ -2,6 +2,7 @@ package data
 
 import (
 	"context"
+	"encoding/json"
 	"rpcClient/app/device/service/ent/device"
 	"rpcClient/app/device/service/internal/biz"
 
@@ -39,17 +40,41 @@ func (r *deviceRepo) UpdateDevice(ctx context.Context, g *biz.Device) error {
 }
 
 func (r *deviceRepo) GetDevice(ctx context.Context, key *string) (*biz.Device, error) {
+	data, redisErr := r.data.rClient.Get(*key).Result()
+	if redisErr == nil {
+		r.log.Warn("redis获取key:" + *key + "成功")
+		var res biz.Device
+		err := json.Unmarshal([]byte(data), &res)
+		if err != nil {
+			r.log.Warn("redis反序列化失败-" + data)
+			return nil, err
+		}
+		return &res, nil
+	} else {
+		r.log.Warn("redis获取key:" + *key + "失败")
+	}
+
 	deviceDB, err := r.data.dbClient.Device.Query().Where(device.HardwareKeyEqualFold(*key)).First(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	return &biz.Device{
+	res := &biz.Device{
 		Id:              int64(deviceDB.ID),
 		Name:            *deviceDB.Name,
 		HardwareKey:     *deviceDB.HardwareKey,
 		Defaultlayoutid: *deviceDB.DefaultLayoutId,
 		Status:          *deviceDB.Status,
 		Storenumber:     *deviceDB.StoreNumber,
-	}, nil
+	}
+
+	bytes, jsonErr := json.Marshal(res)
+	if jsonErr == nil {
+		redisErr = r.data.rClient.Set(*key, string(bytes), 0).Err()
+		if redisErr != nil {
+			r.log.Warn("redis保存key:" + *key + "失败")
+		}
+	}
+
+	return res, nil
 }

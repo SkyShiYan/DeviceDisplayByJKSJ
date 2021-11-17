@@ -20,7 +20,7 @@ import (
 // go build -ldflags "-X main.Version=x.y.z"
 var (
 	// Name is the name of the compiled software.
-	Name = "Device"
+	Name = "deviceRpc"
 	// Version is the version of the compiled software.
 	Version = "v4"
 	// flagconf is the config flag.

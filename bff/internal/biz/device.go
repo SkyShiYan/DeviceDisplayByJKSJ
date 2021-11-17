@@ -9,14 +9,14 @@ import (
 type DeviceRepo interface {
 	CreateDevice(context.Context, *Device) error
 	UpdateDevice(context.Context, *Device) error
-	GetDevice(ctx context.Context, hardwareKey *string) (*Device, error)
+	GetDevice(ctx context.Context, hardwareKey string) (*Device, error)
 }
 
 type Device struct {
 	Name            string
 	HardwareKey     string
 	Defaultlayoutid int32
-	Status          string
+	Status          int32
 	Storenumber     string
 }
 
@@ -37,6 +37,6 @@ func (uc *BffUsecase) UpdateDevice(ctx context.Context, d *Device) error {
 	return nil
 }
 
-func (uc *BffUsecase) GetDevice(ctx context.Context, d *Device) (*Device, error) {
-	return nil, nil
+func (uc *BffUsecase) GetDevice(ctx context.Context, hardwareKey string) (*Device, error) {
+	return uc.repo.GetDevice(ctx, hardwareKey)
 }

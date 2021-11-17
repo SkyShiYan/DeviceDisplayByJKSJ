@@ -39,12 +39,13 @@ func (r *deviceRepo) CreateDevice(ctx context.Context, g *biz.Device) error {
 	if err != nil {
 		return err
 	}
-	gClient := v4.NewClientDeviceClient(conn)
-	replay, err := gClient.AddDeviceByKey(ctx, &v4.AddDeviceByKeyRequest{Name: g.Name,
-		HardwareKey:     g.HardwareKey,
-		Defaultlayoutid: g.Defaultlayoutid,
-		Status:          g.Status,
-		Storenumber:     g.Storenumber})
+	// if conn != nil {
+
+	// }
+	// return nil
+	gClient := v4.NewDeviceClient(conn)
+	replay, err := gClient.UpdateDeviceByKey(ctx, &v4.UpdateDeviceByKeyRequest{
+		HardwareKey: g.HardwareKey})
 
 	if err != nil {
 		return err
@@ -56,6 +57,39 @@ func (r *deviceRepo) UpdateDevice(ctx context.Context, g *biz.Device) error {
 	return nil
 }
 
-func (r *deviceRepo) GetDevice(ctx context.Context, hardwareKey *string) (*biz.Device, error) {
-	return nil, nil
+func (r *deviceRepo) GetDevice(ctx context.Context, hardwareKey string) (*biz.Device, error) {
+	defaultConfig := consulApi.DefaultConfig()
+	defaultConfig.Address = "8.130.28.195:8500"
+	client, err := consulApi.NewClient(defaultConfig)
+	if err != nil {
+		return nil, err
+	}
+	dis := registry.New(client)
+
+	// list, err = dis.ListServices()
+	// if err != nil {
+	// 	return nil, err
+	// }
+
+	endpoint := "discovery:///deviceRpc"
+	conn, err := grpc.DialInsecure(ctx, grpc.WithEndpoint(endpoint), grpc.WithDiscovery(dis))
+	if err != nil {
+		return nil, err
+	}
+
+	gClient := v4.NewDeviceClient(conn)
+	replay, err := gClient.GetDeviceByKey(ctx, &v4.GetDeviceByKeyRequest{
+		HardwareKey: hardwareKey,
+	})
+
+	if err != nil {
+		return nil, err
+	}
+	return &biz.Device{
+		Name:            replay.Name,
+		HardwareKey:     replay.HardwareKey,
+		Defaultlayoutid: replay.Defaultlayoutid,
+		Status:          replay.Status,
+		Storenumber:     replay.Storenumber,
+	}, nil
 }

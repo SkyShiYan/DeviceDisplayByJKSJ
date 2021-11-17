@@ -17,26 +17,29 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
-type ClientDeviceHTTPServer interface {
+type DeviceHTTPServer interface {
 	AddDeviceByKey(context.Context, *AddDeviceByKeyRequest) (*AddDeviceByKeyReply, error)
 	GetDeviceByKey(context.Context, *GetDeviceByKeyRequest) (*GetDeviceByKeyReply, error)
 	UpdateDeviceByKey(context.Context, *UpdateDeviceByKeyRequest) (*UpdateDeviceByKeyReply, error)
 }
 
-func RegisterClientDeviceHTTPServer(s *http.Server, srv ClientDeviceHTTPServer) {
+func RegisterDeviceHTTPServer(s *http.Server, srv DeviceHTTPServer) {
 	r := s.Route("/")
-	r.POST("/getDeviceByKey", _ClientDevice_GetDeviceByKey0_HTTP_Handler(srv))
-	r.POST("/addDeviceByKey", _ClientDevice_AddDeviceByKey0_HTTP_Handler(srv))
-	r.POST("/updateDeviceByKey", _ClientDevice_UpdateDeviceByKey0_HTTP_Handler(srv))
+	r.GET("/getDeviceByKey/{hardwareKey}", _Device_GetDeviceByKey0_HTTP_Handler(srv))
+	r.POST("/addDeviceByKey", _Device_AddDeviceByKey0_HTTP_Handler(srv))
+	r.POST("/updateDeviceByKey", _Device_UpdateDeviceByKey0_HTTP_Handler(srv))
 }
 
-func _ClientDevice_GetDeviceByKey0_HTTP_Handler(srv ClientDeviceHTTPServer) func(ctx http.Context) error {
+func _Device_GetDeviceByKey0_HTTP_Handler(srv DeviceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in GetDeviceByKeyRequest
-		if err := ctx.Bind(&in); err != nil {
+		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, "/device.v4.ClientDevice/GetDeviceByKey")
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, "/device.v4.Device/GetDeviceByKey")
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
 			return srv.GetDeviceByKey(ctx, req.(*GetDeviceByKeyRequest))
 		})
@@ -49,13 +52,13 @@ func _ClientDevice_GetDeviceByKey0_HTTP_Handler(srv ClientDeviceHTTPServer) func
 	}
 }
 
-func _ClientDevice_AddDeviceByKey0_HTTP_Handler(srv ClientDeviceHTTPServer) func(ctx http.Context) error {
+func _Device_AddDeviceByKey0_HTTP_Handler(srv DeviceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in AddDeviceByKeyRequest
 		if err := ctx.Bind(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, "/device.v4.ClientDevice/AddDeviceByKey")
+		http.SetOperation(ctx, "/device.v4.Device/AddDeviceByKey")
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
 			return srv.AddDeviceByKey(ctx, req.(*AddDeviceByKeyRequest))
 		})
@@ -68,13 +71,13 @@ func _ClientDevice_AddDeviceByKey0_HTTP_Handler(srv ClientDeviceHTTPServer) func
 	}
 }
 
-func _ClientDevice_UpdateDeviceByKey0_HTTP_Handler(srv ClientDeviceHTTPServer) func(ctx http.Context) error {
+func _Device_UpdateDeviceByKey0_HTTP_Handler(srv DeviceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in UpdateDeviceByKeyRequest
 		if err := ctx.Bind(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, "/device.v4.ClientDevice/UpdateDeviceByKey")
+		http.SetOperation(ctx, "/device.v4.Device/UpdateDeviceByKey")
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
 			return srv.UpdateDeviceByKey(ctx, req.(*UpdateDeviceByKeyRequest))
 		})
@@ -87,25 +90,25 @@ func _ClientDevice_UpdateDeviceByKey0_HTTP_Handler(srv ClientDeviceHTTPServer) f
 	}
 }
 
-type ClientDeviceHTTPClient interface {
+type DeviceHTTPClient interface {
 	AddDeviceByKey(ctx context.Context, req *AddDeviceByKeyRequest, opts ...http.CallOption) (rsp *AddDeviceByKeyReply, err error)
 	GetDeviceByKey(ctx context.Context, req *GetDeviceByKeyRequest, opts ...http.CallOption) (rsp *GetDeviceByKeyReply, err error)
 	UpdateDeviceByKey(ctx context.Context, req *UpdateDeviceByKeyRequest, opts ...http.CallOption) (rsp *UpdateDeviceByKeyReply, err error)
 }
 
-type ClientDeviceHTTPClientImpl struct {
+type DeviceHTTPClientImpl struct {
 	cc *http.Client
 }
 
-func NewClientDeviceHTTPClient(client *http.Client) ClientDeviceHTTPClient {
-	return &ClientDeviceHTTPClientImpl{client}
+func NewDeviceHTTPClient(client *http.Client) DeviceHTTPClient {
+	return &DeviceHTTPClientImpl{client}
 }
 
-func (c *ClientDeviceHTTPClientImpl) AddDeviceByKey(ctx context.Context, in *AddDeviceByKeyRequest, opts ...http.CallOption) (*AddDeviceByKeyReply, error) {
+func (c *DeviceHTTPClientImpl) AddDeviceByKey(ctx context.Context, in *AddDeviceByKeyRequest, opts ...http.CallOption) (*AddDeviceByKeyReply, error) {
 	var out AddDeviceByKeyReply
 	pattern := "/addDeviceByKey"
 	path := binding.EncodeURL(pattern, in, false)
-	opts = append(opts, http.Operation("/device.v4.ClientDevice/AddDeviceByKey"))
+	opts = append(opts, http.Operation("/device.v4.Device/AddDeviceByKey"))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
@@ -114,24 +117,24 @@ func (c *ClientDeviceHTTPClientImpl) AddDeviceByKey(ctx context.Context, in *Add
 	return &out, err
 }
 
-func (c *ClientDeviceHTTPClientImpl) GetDeviceByKey(ctx context.Context, in *GetDeviceByKeyRequest, opts ...http.CallOption) (*GetDeviceByKeyReply, error) {
+func (c *DeviceHTTPClientImpl) GetDeviceByKey(ctx context.Context, in *GetDeviceByKeyRequest, opts ...http.CallOption) (*GetDeviceByKeyReply, error) {
 	var out GetDeviceByKeyReply
-	pattern := "/getDeviceByKey"
-	path := binding.EncodeURL(pattern, in, false)
-	opts = append(opts, http.Operation("/device.v4.ClientDevice/GetDeviceByKey"))
+	pattern := "/getDeviceByKey/{hardwareKey}"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation("/device.v4.Device/GetDeviceByKey"))
 	opts = append(opts, http.PathTemplate(pattern))
-	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return &out, err
 }
 
-func (c *ClientDeviceHTTPClientImpl) UpdateDeviceByKey(ctx context.Context, in *UpdateDeviceByKeyRequest, opts ...http.CallOption) (*UpdateDeviceByKeyReply, error) {
+func (c *DeviceHTTPClientImpl) UpdateDeviceByKey(ctx context.Context, in *UpdateDeviceByKeyRequest, opts ...http.CallOption) (*UpdateDeviceByKeyReply, error) {
 	var out UpdateDeviceByKeyReply
 	pattern := "/updateDeviceByKey"
 	path := binding.EncodeURL(pattern, in, false)
-	opts = append(opts, http.Operation("/device.v4.ClientDevice/UpdateDeviceByKey"))
+	opts = append(opts, http.Operation("/device.v4.Device/UpdateDeviceByKey"))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {

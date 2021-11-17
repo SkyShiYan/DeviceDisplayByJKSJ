@@ -32,6 +32,7 @@ func (s *DeviceService) AddDeviceByKey(ctx context.Context, in *v4.AddDeviceByKe
 	return nil, err
 }
 func (s *DeviceService) GetDeviceByKey(ctx context.Context, in *v4.GetDeviceByKeyRequest) (*v4.GetDeviceByKeyReply, error) {
+	s.log.Debug("rpc-开始获取数据")
 	device, err := s.uc.Get(ctx, &in.HardwareKey)
 	if err != nil {
 		return nil, err

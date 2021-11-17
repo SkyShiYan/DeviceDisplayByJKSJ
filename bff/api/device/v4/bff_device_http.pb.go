@@ -19,26 +19,26 @@ const _ = http.SupportPackageIsVersion1
 
 type BffDeviceHTTPServer interface {
 	ChangeName(context.Context, *ChangeNameRequest) (*ChangeNameReply, error)
-	Deploy(context.Context, *DeployRequest) (*DeployReply, error)
-	Register(context.Context, *RegisterRequest) (*RegisterReply, error)
+	GetDevice(context.Context, *GetDeviceRequest) (*GetDeviceReply, error)
+	RegisteDevice(context.Context, *RegisterRequest) (*RegisterReply, error)
 }
 
 func RegisterBffDeviceHTTPServer(s *http.Server, srv BffDeviceHTTPServer) {
 	r := s.Route("/")
-	r.POST("/registerDisplay", _BffDevice_Register0_HTTP_Handler(srv))
+	r.POST("/registerDisplay", _BffDevice_RegisteDevice0_HTTP_Handler(srv))
 	r.PUT("/changeDisplayName", _BffDevice_ChangeName0_HTTP_Handler(srv))
-	r.POST("/preDeploy", _BffDevice_Deploy0_HTTP_Handler(srv))
+	r.GET("/getDevice/{hardwareKey}", _BffDevice_GetDevice0_HTTP_Handler(srv))
 }
 
-func _BffDevice_Register0_HTTP_Handler(srv BffDeviceHTTPServer) func(ctx http.Context) error {
+func _BffDevice_RegisteDevice0_HTTP_Handler(srv BffDeviceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in RegisterRequest
 		if err := ctx.Bind(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, "/device.v4.BffDevice/Register")
+		http.SetOperation(ctx, "/device.v4.BffDevice/RegisteDevice")
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.Register(ctx, req.(*RegisterRequest))
+			return srv.RegisteDevice(ctx, req.(*RegisterRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
@@ -68,29 +68,32 @@ func _BffDevice_ChangeName0_HTTP_Handler(srv BffDeviceHTTPServer) func(ctx http.
 	}
 }
 
-func _BffDevice_Deploy0_HTTP_Handler(srv BffDeviceHTTPServer) func(ctx http.Context) error {
+func _BffDevice_GetDevice0_HTTP_Handler(srv BffDeviceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in DeployRequest
-		if err := ctx.Bind(&in); err != nil {
+		var in GetDeviceRequest
+		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, "/device.v4.BffDevice/Deploy")
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, "/device.v4.BffDevice/GetDevice")
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.Deploy(ctx, req.(*DeployRequest))
+			return srv.GetDevice(ctx, req.(*GetDeviceRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
 			return err
 		}
-		reply := out.(*DeployReply)
+		reply := out.(*GetDeviceReply)
 		return ctx.Result(200, reply)
 	}
 }
 
 type BffDeviceHTTPClient interface {
 	ChangeName(ctx context.Context, req *ChangeNameRequest, opts ...http.CallOption) (rsp *ChangeNameReply, err error)
-	Deploy(ctx context.Context, req *DeployRequest, opts ...http.CallOption) (rsp *DeployReply, err error)
-	Register(ctx context.Context, req *RegisterRequest, opts ...http.CallOption) (rsp *RegisterReply, err error)
+	GetDevice(ctx context.Context, req *GetDeviceRequest, opts ...http.CallOption) (rsp *GetDeviceReply, err error)
+	RegisteDevice(ctx context.Context, req *RegisterRequest, opts ...http.CallOption) (rsp *RegisterReply, err error)
 }
 
 type BffDeviceHTTPClientImpl struct {
@@ -114,24 +117,24 @@ func (c *BffDeviceHTTPClientImpl) ChangeName(ctx context.Context, in *ChangeName
 	return &out, err
 }
 
-func (c *BffDeviceHTTPClientImpl) Deploy(ctx context.Context, in *DeployRequest, opts ...http.CallOption) (*DeployReply, error) {
-	var out DeployReply
-	pattern := "/preDeploy"
-	path := binding.EncodeURL(pattern, in, false)
-	opts = append(opts, http.Operation("/device.v4.BffDevice/Deploy"))
+func (c *BffDeviceHTTPClientImpl) GetDevice(ctx context.Context, in *GetDeviceRequest, opts ...http.CallOption) (*GetDeviceReply, error) {
+	var out GetDeviceReply
+	pattern := "/getDevice/{hardwareKey}"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation("/device.v4.BffDevice/GetDevice"))
 	opts = append(opts, http.PathTemplate(pattern))
-	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return &out, err
 }
 
-func (c *BffDeviceHTTPClientImpl) Register(ctx context.Context, in *RegisterRequest, opts ...http.CallOption) (*RegisterReply, error) {
+func (c *BffDeviceHTTPClientImpl) RegisteDevice(ctx context.Context, in *RegisterRequest, opts ...http.CallOption) (*RegisterReply, error) {
 	var out RegisterReply
 	pattern := "/registerDisplay"
 	path := binding.EncodeURL(pattern, in, false)
-	opts = append(opts, http.Operation("/device.v4.BffDevice/Register"))
+	opts = append(opts, http.Operation("/device.v4.BffDevice/RegisteDevice"))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {

@@ -19,11 +19,11 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type BffDeviceClient interface {
 	// 注册或更新设备
-	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterReply, error)
+	RegisteDevice(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterReply, error)
 	// 修改设备名称
 	ChangeName(ctx context.Context, in *ChangeNameRequest, opts ...grpc.CallOption) (*ChangeNameReply, error)
-	// 预部署
-	Deploy(ctx context.Context, in *DeployRequest, opts ...grpc.CallOption) (*DeployReply, error)
+	// 获取设备信息
+	GetDevice(ctx context.Context, in *GetDeviceRequest, opts ...grpc.CallOption) (*GetDeviceReply, error)
 }
 
 type bffDeviceClient struct {
@@ -34,9 +34,9 @@ func NewBffDeviceClient(cc grpc.ClientConnInterface) BffDeviceClient {
 	return &bffDeviceClient{cc}
 }
 
-func (c *bffDeviceClient) Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterReply, error) {
+func (c *bffDeviceClient) RegisteDevice(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterReply, error) {
 	out := new(RegisterReply)
-	err := c.cc.Invoke(ctx, "/device.v4.BffDevice/register", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/device.v4.BffDevice/registeDevice", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -52,9 +52,9 @@ func (c *bffDeviceClient) ChangeName(ctx context.Context, in *ChangeNameRequest,
 	return out, nil
 }
 
-func (c *bffDeviceClient) Deploy(ctx context.Context, in *DeployRequest, opts ...grpc.CallOption) (*DeployReply, error) {
-	out := new(DeployReply)
-	err := c.cc.Invoke(ctx, "/device.v4.BffDevice/deploy", in, out, opts...)
+func (c *bffDeviceClient) GetDevice(ctx context.Context, in *GetDeviceRequest, opts ...grpc.CallOption) (*GetDeviceReply, error) {
+	out := new(GetDeviceReply)
+	err := c.cc.Invoke(ctx, "/device.v4.BffDevice/getDevice", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -66,11 +66,11 @@ func (c *bffDeviceClient) Deploy(ctx context.Context, in *DeployRequest, opts ..
 // for forward compatibility
 type BffDeviceServer interface {
 	// 注册或更新设备
-	Register(context.Context, *RegisterRequest) (*RegisterReply, error)
+	RegisteDevice(context.Context, *RegisterRequest) (*RegisterReply, error)
 	// 修改设备名称
 	ChangeName(context.Context, *ChangeNameRequest) (*ChangeNameReply, error)
-	// 预部署
-	Deploy(context.Context, *DeployRequest) (*DeployReply, error)
+	// 获取设备信息
+	GetDevice(context.Context, *GetDeviceRequest) (*GetDeviceReply, error)
 	mustEmbedUnimplementedBffDeviceServer()
 }
 
@@ -78,14 +78,14 @@ type BffDeviceServer interface {
 type UnimplementedBffDeviceServer struct {
 }
 
-func (UnimplementedBffDeviceServer) Register(context.Context, *RegisterRequest) (*RegisterReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
+func (UnimplementedBffDeviceServer) RegisteDevice(context.Context, *RegisterRequest) (*RegisterReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RegisteDevice not implemented")
 }
 func (UnimplementedBffDeviceServer) ChangeName(context.Context, *ChangeNameRequest) (*ChangeNameReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ChangeName not implemented")
 }
-func (UnimplementedBffDeviceServer) Deploy(context.Context, *DeployRequest) (*DeployReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Deploy not implemented")
+func (UnimplementedBffDeviceServer) GetDevice(context.Context, *GetDeviceRequest) (*GetDeviceReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetDevice not implemented")
 }
 func (UnimplementedBffDeviceServer) mustEmbedUnimplementedBffDeviceServer() {}
 
@@ -100,20 +100,20 @@ func RegisterBffDeviceServer(s grpc.ServiceRegistrar, srv BffDeviceServer) {
 	s.RegisterService(&BffDevice_ServiceDesc, srv)
 }
 
-func _BffDevice_Register_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _BffDevice_RegisteDevice_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(RegisterRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(BffDeviceServer).Register(ctx, in)
+		return srv.(BffDeviceServer).RegisteDevice(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/device.v4.BffDevice/register",
+		FullMethod: "/device.v4.BffDevice/registeDevice",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BffDeviceServer).Register(ctx, req.(*RegisterRequest))
+		return srv.(BffDeviceServer).RegisteDevice(ctx, req.(*RegisterRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -136,20 +136,20 @@ func _BffDevice_ChangeName_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
-func _BffDevice_Deploy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeployRequest)
+func _BffDevice_GetDevice_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetDeviceRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(BffDeviceServer).Deploy(ctx, in)
+		return srv.(BffDeviceServer).GetDevice(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/device.v4.BffDevice/deploy",
+		FullMethod: "/device.v4.BffDevice/getDevice",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BffDeviceServer).Deploy(ctx, req.(*DeployRequest))
+		return srv.(BffDeviceServer).GetDevice(ctx, req.(*GetDeviceRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -162,16 +162,16 @@ var BffDevice_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*BffDeviceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "register",
-			Handler:    _BffDevice_Register_Handler,
+			MethodName: "registeDevice",
+			Handler:    _BffDevice_RegisteDevice_Handler,
 		},
 		{
 			MethodName: "changeName",
 			Handler:    _BffDevice_ChangeName_Handler,
 		},
 		{
-			MethodName: "deploy",
-			Handler:    _BffDevice_Deploy_Handler,
+			MethodName: "getDevice",
+			Handler:    _BffDevice_GetDevice_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

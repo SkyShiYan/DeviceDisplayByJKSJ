@@ -14,10 +14,10 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// ClientDeviceClient is the client API for ClientDevice service.
+// DeviceClient is the client API for Device service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type ClientDeviceClient interface {
+type DeviceClient interface {
 	// 获取设备
 	GetDeviceByKey(ctx context.Context, in *GetDeviceByKeyRequest, opts ...grpc.CallOption) (*GetDeviceByKeyReply, error)
 	// 新增设备信息
@@ -26,152 +26,152 @@ type ClientDeviceClient interface {
 	UpdateDeviceByKey(ctx context.Context, in *UpdateDeviceByKeyRequest, opts ...grpc.CallOption) (*UpdateDeviceByKeyReply, error)
 }
 
-type clientDeviceClient struct {
+type deviceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewClientDeviceClient(cc grpc.ClientConnInterface) ClientDeviceClient {
-	return &clientDeviceClient{cc}
+func NewDeviceClient(cc grpc.ClientConnInterface) DeviceClient {
+	return &deviceClient{cc}
 }
 
-func (c *clientDeviceClient) GetDeviceByKey(ctx context.Context, in *GetDeviceByKeyRequest, opts ...grpc.CallOption) (*GetDeviceByKeyReply, error) {
+func (c *deviceClient) GetDeviceByKey(ctx context.Context, in *GetDeviceByKeyRequest, opts ...grpc.CallOption) (*GetDeviceByKeyReply, error) {
 	out := new(GetDeviceByKeyReply)
-	err := c.cc.Invoke(ctx, "/device.v4.ClientDevice/getDeviceByKey", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/device.v4.Device/getDeviceByKey", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *clientDeviceClient) AddDeviceByKey(ctx context.Context, in *AddDeviceByKeyRequest, opts ...grpc.CallOption) (*AddDeviceByKeyReply, error) {
+func (c *deviceClient) AddDeviceByKey(ctx context.Context, in *AddDeviceByKeyRequest, opts ...grpc.CallOption) (*AddDeviceByKeyReply, error) {
 	out := new(AddDeviceByKeyReply)
-	err := c.cc.Invoke(ctx, "/device.v4.ClientDevice/addDeviceByKey", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/device.v4.Device/addDeviceByKey", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *clientDeviceClient) UpdateDeviceByKey(ctx context.Context, in *UpdateDeviceByKeyRequest, opts ...grpc.CallOption) (*UpdateDeviceByKeyReply, error) {
+func (c *deviceClient) UpdateDeviceByKey(ctx context.Context, in *UpdateDeviceByKeyRequest, opts ...grpc.CallOption) (*UpdateDeviceByKeyReply, error) {
 	out := new(UpdateDeviceByKeyReply)
-	err := c.cc.Invoke(ctx, "/device.v4.ClientDevice/updateDeviceByKey", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/device.v4.Device/updateDeviceByKey", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// ClientDeviceServer is the server API for ClientDevice service.
-// All implementations must embed UnimplementedClientDeviceServer
+// DeviceServer is the server API for Device service.
+// All implementations must embed UnimplementedDeviceServer
 // for forward compatibility
-type ClientDeviceServer interface {
+type DeviceServer interface {
 	// 获取设备
 	GetDeviceByKey(context.Context, *GetDeviceByKeyRequest) (*GetDeviceByKeyReply, error)
 	// 新增设备信息
 	AddDeviceByKey(context.Context, *AddDeviceByKeyRequest) (*AddDeviceByKeyReply, error)
 	// 更新设备信息
 	UpdateDeviceByKey(context.Context, *UpdateDeviceByKeyRequest) (*UpdateDeviceByKeyReply, error)
-	mustEmbedUnimplementedClientDeviceServer()
+	mustEmbedUnimplementedDeviceServer()
 }
 
-// UnimplementedClientDeviceServer must be embedded to have forward compatible implementations.
-type UnimplementedClientDeviceServer struct {
+// UnimplementedDeviceServer must be embedded to have forward compatible implementations.
+type UnimplementedDeviceServer struct {
 }
 
-func (UnimplementedClientDeviceServer) GetDeviceByKey(context.Context, *GetDeviceByKeyRequest) (*GetDeviceByKeyReply, error) {
+func (UnimplementedDeviceServer) GetDeviceByKey(context.Context, *GetDeviceByKeyRequest) (*GetDeviceByKeyReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetDeviceByKey not implemented")
 }
-func (UnimplementedClientDeviceServer) AddDeviceByKey(context.Context, *AddDeviceByKeyRequest) (*AddDeviceByKeyReply, error) {
+func (UnimplementedDeviceServer) AddDeviceByKey(context.Context, *AddDeviceByKeyRequest) (*AddDeviceByKeyReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddDeviceByKey not implemented")
 }
-func (UnimplementedClientDeviceServer) UpdateDeviceByKey(context.Context, *UpdateDeviceByKeyRequest) (*UpdateDeviceByKeyReply, error) {
+func (UnimplementedDeviceServer) UpdateDeviceByKey(context.Context, *UpdateDeviceByKeyRequest) (*UpdateDeviceByKeyReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateDeviceByKey not implemented")
 }
-func (UnimplementedClientDeviceServer) mustEmbedUnimplementedClientDeviceServer() {}
+func (UnimplementedDeviceServer) mustEmbedUnimplementedDeviceServer() {}
 
-// UnsafeClientDeviceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to ClientDeviceServer will
+// UnsafeDeviceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to DeviceServer will
 // result in compilation errors.
-type UnsafeClientDeviceServer interface {
-	mustEmbedUnimplementedClientDeviceServer()
+type UnsafeDeviceServer interface {
+	mustEmbedUnimplementedDeviceServer()
 }
 
-func RegisterClientDeviceServer(s grpc.ServiceRegistrar, srv ClientDeviceServer) {
-	s.RegisterService(&ClientDevice_ServiceDesc, srv)
+func RegisterDeviceServer(s grpc.ServiceRegistrar, srv DeviceServer) {
+	s.RegisterService(&Device_ServiceDesc, srv)
 }
 
-func _ClientDevice_GetDeviceByKey_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Device_GetDeviceByKey_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetDeviceByKeyRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ClientDeviceServer).GetDeviceByKey(ctx, in)
+		return srv.(DeviceServer).GetDeviceByKey(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/device.v4.ClientDevice/getDeviceByKey",
+		FullMethod: "/device.v4.Device/getDeviceByKey",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ClientDeviceServer).GetDeviceByKey(ctx, req.(*GetDeviceByKeyRequest))
+		return srv.(DeviceServer).GetDeviceByKey(ctx, req.(*GetDeviceByKeyRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ClientDevice_AddDeviceByKey_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Device_AddDeviceByKey_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AddDeviceByKeyRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ClientDeviceServer).AddDeviceByKey(ctx, in)
+		return srv.(DeviceServer).AddDeviceByKey(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/device.v4.ClientDevice/addDeviceByKey",
+		FullMethod: "/device.v4.Device/addDeviceByKey",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ClientDeviceServer).AddDeviceByKey(ctx, req.(*AddDeviceByKeyRequest))
+		return srv.(DeviceServer).AddDeviceByKey(ctx, req.(*AddDeviceByKeyRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ClientDevice_UpdateDeviceByKey_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Device_UpdateDeviceByKey_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateDeviceByKeyRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ClientDeviceServer).UpdateDeviceByKey(ctx, in)
+		return srv.(DeviceServer).UpdateDeviceByKey(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/device.v4.ClientDevice/updateDeviceByKey",
+		FullMethod: "/device.v4.Device/updateDeviceByKey",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ClientDeviceServer).UpdateDeviceByKey(ctx, req.(*UpdateDeviceByKeyRequest))
+		return srv.(DeviceServer).UpdateDeviceByKey(ctx, req.(*UpdateDeviceByKeyRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// ClientDevice_ServiceDesc is the grpc.ServiceDesc for ClientDevice service.
+// Device_ServiceDesc is the grpc.ServiceDesc for Device service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var ClientDevice_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "device.v4.ClientDevice",
-	HandlerType: (*ClientDeviceServer)(nil),
+var Device_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "device.v4.Device",
+	HandlerType: (*DeviceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "getDeviceByKey",
-			Handler:    _ClientDevice_GetDeviceByKey_Handler,
+			Handler:    _Device_GetDeviceByKey_Handler,
 		},
 		{
 			MethodName: "addDeviceByKey",
-			Handler:    _ClientDevice_AddDeviceByKey_Handler,
+			Handler:    _Device_AddDeviceByKey_Handler,
 		},
 		{
 			MethodName: "updateDeviceByKey",
-			Handler:    _ClientDevice_UpdateDeviceByKey_Handler,
+			Handler:    _Device_UpdateDeviceByKey_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

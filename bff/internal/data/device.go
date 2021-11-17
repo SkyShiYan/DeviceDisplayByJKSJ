@@ -4,6 +4,8 @@ import (
 	v4 "bff/api/device/v4"
 	"bff/internal/biz"
 	"context"
+	"encoding/json"
+	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
@@ -58,6 +60,18 @@ func (r *deviceRepo) UpdateDevice(ctx context.Context, g *biz.Device) error {
 }
 
 func (r *deviceRepo) GetDevice(ctx context.Context, hardwareKey string) (*biz.Device, error) {
+	rD, err := r.data.rClient.Get("bff-" + hardwareKey).Result()
+	if err == nil {
+		var d biz.Device
+		jErr := json.Unmarshal([]byte(rD), &d)
+		if jErr == nil {
+			r.log.Debug("从redis中获取数据")
+			return &d, nil
+		} else {
+			r.log.Warn("redis获取key:" + hardwareKey + "json Unmarshal 失败")
+		}
+	}
+
 	defaultConfig := consulApi.DefaultConfig()
 	defaultConfig.Address = "8.130.28.195:8500"
 	client, err := consulApi.NewClient(defaultConfig)
@@ -85,11 +99,19 @@ func (r *deviceRepo) GetDevice(ctx context.Context, hardwareKey string) (*biz.De
 	if err != nil {
 		return nil, err
 	}
-	return &biz.Device{
+
+	d := &biz.Device{
 		Name:            replay.Name,
 		HardwareKey:     replay.HardwareKey,
 		Defaultlayoutid: replay.Defaultlayoutid,
 		Status:          replay.Status,
 		Storenumber:     replay.Storenumber,
-	}, nil
+	}
+
+	bytes, jErr := json.Marshal(d)
+	if jErr != nil {
+		r.data.rClient.Set("bff-"+hardwareKey, bytes, time.Duration(time.Minute.Minutes()))
+	}
+
+	return d, nil
 }

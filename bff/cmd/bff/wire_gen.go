@@ -24,7 +24,8 @@ func initApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*
 		return nil, nil, err
 	}
 	deviceRepo := data.NewBffRepo(dataData, logger)
-	bffUsecase := biz.NewBffUsecase(deviceRepo, logger)
+	layoutRepo := data.NewBffLayoutRepo(dataData, logger)
+	bffUsecase := biz.NewBffUsecase(deviceRepo, layoutRepo, logger)
 	bffService := service.NewBffService(bffUsecase, logger)
 	httpServer := server.NewHTTPServer(confServer, bffService, logger)
 	grpcServer := server.NewGRPCServer(confServer, bffService, logger)

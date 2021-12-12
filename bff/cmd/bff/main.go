@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"bff/internal/conf"
+	kafkaLib "bff/third_party/persional/kafka"
 
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/config"
@@ -47,7 +48,8 @@ func newApp(logger log.Logger, hs *http.Server, gs *grpc.Server) *kratos.App {
 
 func main() {
 	flag.Parse()
-	logger := log.With(log.NewStdLogger(os.Stdout),
+	kLogger := kafkaLib.NewKafkaLogger(os.Stdout)
+	logger := log.With(kLogger,
 		"ts", log.DefaultTimestamp,
 		"caller", log.DefaultCaller,
 		"service.id", id,
@@ -75,6 +77,7 @@ func main() {
 		panic(err)
 	}
 	defer cleanup()
+	defer (kLogger.(*kafkaLib.KafkaLogger)).Close()
 
 	// start and wait for stop signal
 	if err := app.Run(); err != nil {

@@ -20,13 +20,6 @@ func NewBffService(uc *biz.BffUsecase, logger log.Logger) *BffService {
 	return &BffService{buc: uc, log: log.NewHelper(logger)}
 }
 
-// func (s *BffService) register(ctx context.Context, in *v4.RegisterRequest) (*v4.RegisterReply, error) {
-// 	err := s.buc.CreateDevice(ctx, &biz.Device{
-// 		HardwareKey: in.GetHardwareKey(),
-// 	})
-// 	return nil, err
-// }
-
 func (s *BffService) ChangeName(ctx context.Context, in *v4.ChangeNameRequest) (*v4.ChangeNameReply, error) {
 	// err := s.buc.CreateDevice(ctx, &biz.Device{
 	// 	HardwareKey: in.GetHardwareKey(),
@@ -51,4 +44,25 @@ func (s *BffService) GetDevice(ctx context.Context, in *v4.GetDeviceRequest) (*v
 }
 func (s *BffService) Register(ctx context.Context, in *v4.RegisterRequest) (*v4.RegisterReply, error) {
 	return nil, nil
+}
+func (s *BffService) GetDeviceDisplay(ctx context.Context, req *v4.GetDeviceDisplayRequest) (*v4.GetDeviceDisplayReply, error) {
+	// layouts, err := s.buc.GetLayoutByDevice(ctx, req.HardwareKey)
+	layouts, err := s.buc.GetDeviceDisplay(ctx, req.HardwareKey)
+	if err != nil {
+		return nil, err
+	}
+	if layouts == nil {
+		return nil, nil
+	}
+
+	var data []*v4.GetDeviceDisplayReply_DisplayItem
+	for _, layout := range layouts {
+		data = append(data, &v4.GetDeviceDisplayReply_DisplayItem{
+			Name: layout.Name,
+			Md5:  layout.Md5,
+		})
+	}
+	return &v4.GetDeviceDisplayReply{
+		DisplayList: data,
+	}, nil
 }

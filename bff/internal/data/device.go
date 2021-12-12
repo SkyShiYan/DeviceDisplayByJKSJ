@@ -60,6 +60,7 @@ func (r *deviceRepo) UpdateDevice(ctx context.Context, g *biz.Device) error {
 }
 
 func (r *deviceRepo) GetDevice(ctx context.Context, hardwareKey string) (*biz.Device, error) {
+	r.log.Debug("111111")
 	rD, err := r.data.rClient.Get("bff-" + hardwareKey).Result()
 	if err == nil {
 		var d biz.Device

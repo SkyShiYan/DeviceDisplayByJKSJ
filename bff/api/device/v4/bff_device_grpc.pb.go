@@ -24,6 +24,8 @@ type BffDeviceClient interface {
 	ChangeName(ctx context.Context, in *ChangeNameRequest, opts ...grpc.CallOption) (*ChangeNameReply, error)
 	// 获取设备信息
 	GetDevice(ctx context.Context, in *GetDeviceRequest, opts ...grpc.CallOption) (*GetDeviceReply, error)
+	// 获取设备信息
+	GetDeviceDisplay(ctx context.Context, in *GetDeviceDisplayRequest, opts ...grpc.CallOption) (*GetDeviceDisplayReply, error)
 }
 
 type bffDeviceClient struct {
@@ -61,6 +63,15 @@ func (c *bffDeviceClient) GetDevice(ctx context.Context, in *GetDeviceRequest, o
 	return out, nil
 }
 
+func (c *bffDeviceClient) GetDeviceDisplay(ctx context.Context, in *GetDeviceDisplayRequest, opts ...grpc.CallOption) (*GetDeviceDisplayReply, error) {
+	out := new(GetDeviceDisplayReply)
+	err := c.cc.Invoke(ctx, "/device.v4.BffDevice/getDeviceDisplay", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // BffDeviceServer is the server API for BffDevice service.
 // All implementations must embed UnimplementedBffDeviceServer
 // for forward compatibility
@@ -71,6 +82,8 @@ type BffDeviceServer interface {
 	ChangeName(context.Context, *ChangeNameRequest) (*ChangeNameReply, error)
 	// 获取设备信息
 	GetDevice(context.Context, *GetDeviceRequest) (*GetDeviceReply, error)
+	// 获取设备信息
+	GetDeviceDisplay(context.Context, *GetDeviceDisplayRequest) (*GetDeviceDisplayReply, error)
 	mustEmbedUnimplementedBffDeviceServer()
 }
 
@@ -86,6 +99,9 @@ func (UnimplementedBffDeviceServer) ChangeName(context.Context, *ChangeNameReque
 }
 func (UnimplementedBffDeviceServer) GetDevice(context.Context, *GetDeviceRequest) (*GetDeviceReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetDevice not implemented")
+}
+func (UnimplementedBffDeviceServer) GetDeviceDisplay(context.Context, *GetDeviceDisplayRequest) (*GetDeviceDisplayReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetDeviceDisplay not implemented")
 }
 func (UnimplementedBffDeviceServer) mustEmbedUnimplementedBffDeviceServer() {}
 
@@ -154,6 +170,24 @@ func _BffDevice_GetDevice_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BffDevice_GetDeviceDisplay_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetDeviceDisplayRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BffDeviceServer).GetDeviceDisplay(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/device.v4.BffDevice/getDeviceDisplay",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BffDeviceServer).GetDeviceDisplay(ctx, req.(*GetDeviceDisplayRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // BffDevice_ServiceDesc is the grpc.ServiceDesc for BffDevice service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -172,6 +206,10 @@ var BffDevice_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "getDevice",
 			Handler:    _BffDevice_GetDevice_Handler,
+		},
+		{
+			MethodName: "getDeviceDisplay",
+			Handler:    _BffDevice_GetDeviceDisplay_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

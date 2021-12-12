@@ -20,6 +20,7 @@ const _ = http.SupportPackageIsVersion1
 type BffDeviceHTTPServer interface {
 	ChangeName(context.Context, *ChangeNameRequest) (*ChangeNameReply, error)
 	GetDevice(context.Context, *GetDeviceRequest) (*GetDeviceReply, error)
+	GetDeviceDisplay(context.Context, *GetDeviceDisplayRequest) (*GetDeviceDisplayReply, error)
 	RegisteDevice(context.Context, *RegisterRequest) (*RegisterReply, error)
 }
 
@@ -28,6 +29,7 @@ func RegisterBffDeviceHTTPServer(s *http.Server, srv BffDeviceHTTPServer) {
 	r.POST("/registerDisplay", _BffDevice_RegisteDevice0_HTTP_Handler(srv))
 	r.PUT("/changeDisplayName", _BffDevice_ChangeName0_HTTP_Handler(srv))
 	r.GET("/getDevice/{hardwareKey}", _BffDevice_GetDevice0_HTTP_Handler(srv))
+	r.GET("/getDeviceDisplay/{hardwareKey}", _BffDevice_GetDeviceDisplay0_HTTP_Handler(srv))
 }
 
 func _BffDevice_RegisteDevice0_HTTP_Handler(srv BffDeviceHTTPServer) func(ctx http.Context) error {
@@ -90,9 +92,32 @@ func _BffDevice_GetDevice0_HTTP_Handler(srv BffDeviceHTTPServer) func(ctx http.C
 	}
 }
 
+func _BffDevice_GetDeviceDisplay0_HTTP_Handler(srv BffDeviceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in GetDeviceDisplayRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, "/device.v4.BffDevice/GetDeviceDisplay")
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.GetDeviceDisplay(ctx, req.(*GetDeviceDisplayRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*GetDeviceDisplayReply)
+		return ctx.Result(200, reply)
+	}
+}
+
 type BffDeviceHTTPClient interface {
 	ChangeName(ctx context.Context, req *ChangeNameRequest, opts ...http.CallOption) (rsp *ChangeNameReply, err error)
 	GetDevice(ctx context.Context, req *GetDeviceRequest, opts ...http.CallOption) (rsp *GetDeviceReply, err error)
+	GetDeviceDisplay(ctx context.Context, req *GetDeviceDisplayRequest, opts ...http.CallOption) (rsp *GetDeviceDisplayReply, err error)
 	RegisteDevice(ctx context.Context, req *RegisterRequest, opts ...http.CallOption) (rsp *RegisterReply, err error)
 }
 
@@ -122,6 +147,19 @@ func (c *BffDeviceHTTPClientImpl) GetDevice(ctx context.Context, in *GetDeviceRe
 	pattern := "/getDevice/{hardwareKey}"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation("/device.v4.BffDevice/GetDevice"))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
+func (c *BffDeviceHTTPClientImpl) GetDeviceDisplay(ctx context.Context, in *GetDeviceDisplayRequest, opts ...http.CallOption) (*GetDeviceDisplayReply, error) {
+	var out GetDeviceDisplayReply
+	pattern := "/getDeviceDisplay/{hardwareKey}"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation("/device.v4.BffDevice/GetDeviceDisplay"))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {
